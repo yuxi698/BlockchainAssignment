@@ -160,14 +160,25 @@ namespace BlockchainAssignment
 
             for (int i = 1; i < blockchain.blocks.Count; i++)
             {
-                if (
-                    blockchain.blocks[i].prevHash != blockchain.blocks[i - 1].hash ||
-                    !Blockchain.ValidateHash(blockchain.blocks[i]) ||
-                    !Blockchain.ValidateMerkleRoot(blockchain.blocks[i])
-                )
+                Block b = blockchain.blocks[i];
+
+                // Layers 1-3: chain link, block hash, Merkle root
+                if (b.prevHash != blockchain.blocks[i - 1].hash ||
+                    !Blockchain.ValidateHash(b) ||
+                    !Blockchain.ValidateMerkleRoot(b))
                 {
                     UpdateText("Blockchain is invalid");
                     return;
+                }
+
+                // Layer 4: re-verify the ECDSA signature on every transaction
+                foreach (Transaction t in b.transactionList)
+                {
+                    if (!Wallet.Wallet.ValidateSignature(t.senderAddress, t.hash, t.signature))
+                    {
+                        UpdateText("Blockchain is invalid");
+                        return;
+                    }
                 }
             }
             UpdateText("Blockchain is valid");
