@@ -158,7 +158,7 @@ namespace BlockchainAssignment
                 return;
             }
 
-            for (int i = 1; i < blockchain.blocks.Count - 1; i++)
+            for (int i = 1; i < blockchain.blocks.Count; i++)
             {
                 if (
                     blockchain.blocks[i].prevHash != blockchain.blocks[i - 1].hash ||
