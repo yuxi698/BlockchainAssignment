@@ -162,9 +162,15 @@ namespace BlockchainAssignment
                     break;
 
                 case MinePreference.Random:
-                    // Random selection
-                    Random rng = new Random();
-                    selected = transactionPool.OrderBy(t => rng.Next()).Take(n).ToList();
+                    // Fisher-Yates shuffle on a working copy, then take the first n.
+                    // Uses the class-level rng so we don't re-seed on every call.
+                    selected = transactionPool.ToList();
+                    for (int i = selected.Count - 1; i > 0; i--)
+                    {
+                        int j = rng.Next(i + 1);
+                        var tmp = selected[i]; selected[i] = selected[j]; selected[j] = tmp;
+                    }
+                    selected = selected.Take(n).ToList();
                     break;
 
                 case MinePreference.AddressPreference:
