@@ -22,6 +22,11 @@ namespace BlockchainAssignment
         private int transactionsPerBlock = 5;                                 // Maximum number of transactions per block
         public List<Transaction> transactionPool = new List<Transaction>();   // List of pending transactions to be mined
 
+        // Single shared RNG used by the Random selection strategy.
+        // Avoids the seed-collision problem caused by `new Random()` per call
+        // when the system clock has not advanced between successive invocations.
+        private static readonly Random rng = new Random();
+        
         /* Blockchain Constructor */
         public Blockchain()  // Initialises the list of blocks and generates the genesis block
         {
